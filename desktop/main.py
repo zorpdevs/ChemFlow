@@ -23,7 +23,12 @@ except ImportError:
 
 # Configuration
 API_BASE_URL = "http://127.0.0.1:8000/api/"
-FIREBASE_API_KEY = "AIzaSyAzRM5MktroxaKk_lqftdnDn_ozsOnr48k" 
+FIREBASE_API_KEY = os.getenv("FIREBASE_API_KEY")
+
+if not FIREBASE_API_KEY:
+    # Fallback or Error
+    print("Warning: FIREBASE_API_KEY not found in .env")
+    FIREBASE_API_KEY = "PLACEHOLDER_KEY" 
 
 # Firebase REST API Endpoints
 FIREBASE_SIGNUP_URL = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={FIREBASE_API_KEY}"

@@ -55,3 +55,4 @@ db.sqlite3
 # Credentials
 desktop/client_secret.json
 src/firebase.js
+backend/serviceAccountKey.json

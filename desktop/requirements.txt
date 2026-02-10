@@ -1,6 +1,6 @@
 PyQt5
 requests
-matplotlib
 pandas
+matplotlib
 google-auth-oauthlib
-
+python-dotenv
