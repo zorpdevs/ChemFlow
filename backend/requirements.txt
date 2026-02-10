@@ -1,0 +1,9 @@
+django
+djangorestframework
+pandas
+django-cors-headers
+reportlab
+psycopg2-binary
+dj-database-url
+python-dotenv
+whitenoise
