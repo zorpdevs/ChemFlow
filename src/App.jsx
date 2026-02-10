@@ -148,14 +148,7 @@ function App() {
       setSummary(response.data);
     } catch (err) {
       console.error(err);
-      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-          setError('Invalid credentials or session expired. Please login again.');
-          setIsAuthenticated(false);
-      } else if (err.response && err.response.status === 404) {
-          setSummary(null);
-      } else {
-          setError('Failed to fetch data. Server might be down or file not uploaded yet.');
-      }
+      setError('Failed to fetch data. Server might be down or file not uploaded yet.');
     } finally {
       setLoading(false);
     }
