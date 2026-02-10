@@ -11,6 +11,8 @@ import {
     serverTimestamp 
 } from 'firebase/firestore';
 import Papa from 'papaparse';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 // We keep axios for potential external APIs, but main logic moves to Firebase
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/';
@@ -142,9 +144,65 @@ export const getHistory = async () => {
     }
 };
 
-export const generatePDF = async () => {
-    // For now, keep as is or implement client-side PDF if needed
-    return api.post('generate-pdf/', {}, { responseType: 'blob' });
+export const generatePDF = (summaryData) => {
+    if (!summaryData) return;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(40, 44, 52);
+    doc.text('Equipment Analysis Report', pageWidth / 2, 15, { align: 'center' });
+
+    // User Info & Date
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    const dateStr = new Date().toLocaleString();
+    doc.text(`Generated on: ${dateStr}`, 14, 25);
+    doc.text(`User ID: ${summaryData.userId}`, 14, 30);
+
+    // Summary Stats Section
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    doc.text('Summary Statistics', 14, 40);
+    
+    const statsData = [
+        ['Total Equipments', summaryData.total_count],
+        ['Average Flowrate', `${summaryData.avg_flowrate.toFixed(2)} m³/h`],
+        ['Average Pressure', `${summaryData.avg_pressure.toFixed(2)} bar`],
+        ['Average Temperature', `${summaryData.avg_temperature.toFixed(2)} °C`]
+    ];
+
+    doc.autoTable({
+        startY: 45,
+        head: [['Metric', 'Value']],
+        body: statsData,
+        theme: 'striped',
+        headStyles: { fillColor: [66, 133, 244] }
+    });
+
+    // Equipment List Table
+    doc.setFontSize(14);
+    doc.text('Detailed Equipment List', 14, doc.lastAutoTable.finalY + 15);
+
+    const tableData = summaryData.equipment_list.map(item => [
+        item['Equipment Name'],
+        item['Type'],
+        item['Flowrate'],
+        item['Pressure'],
+        item['Temperature']
+    ]);
+
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 20,
+        head: [['Name', 'Type', 'Flowrate', 'Pressure', 'Temp']],
+        body: tableData,
+        theme: 'grid',
+        headStyles: { fillColor: [52, 73, 94] }
+    });
+
+    doc.save(`Equipment_Report_${new Date().getTime()}.pdf`);
 };
 
 export default api;

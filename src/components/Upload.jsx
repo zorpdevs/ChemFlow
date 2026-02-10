@@ -27,7 +27,7 @@ const Upload = ({ onUploadSuccess }) => {
             setSuccessMsg('File uploaded successfully!');
             if (onUploadSuccess) onUploadSuccess(response.data);
         } catch (err) {
-            setError('Upload failed. Please check credentials or file format.');
+            setError(err.message || 'Upload failed. Please check credentials or file format.');
             console.error(err);
         } finally {
             setUploading(false);

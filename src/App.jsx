@@ -154,16 +154,13 @@ function App() {
     }
   };
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = () => {
     try {
-      const response = await generatePDF();
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'equipment_report.pdf');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      if (!summary) {
+        alert('No data available to generate PDF');
+        return;
+      }
+      generatePDF(summary);
     } catch (err) {
       console.error('PDF generation failed', err);
       alert('Failed to generate PDF');
